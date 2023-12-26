@@ -1,0 +1,47 @@
+[gd_resource type="SpriteFrames" load_steps=7 format=3 uid="uid://da2mc5od1ofwe"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qgm0i"]
+load_path = "res://.godot/imported/coin3D-Body.png-82e1f6d359b2ceee7ad3ec11df749d23.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6yuje"]
+atlas = SubResource("CompressedTexture2D_qgm0i")
+region = Rect2(0, 0, 9, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pw4sh"]
+atlas = SubResource("CompressedTexture2D_qgm0i")
+region = Rect2(9, 0, 7, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rc3lf"]
+atlas = SubResource("CompressedTexture2D_qgm0i")
+region = Rect2(0, 10, 6, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ntst"]
+atlas = SubResource("CompressedTexture2D_qgm0i")
+region = Rect2(6, 10, 5, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ke8bf"]
+atlas = SubResource("CompressedTexture2D_qgm0i")
+region = Rect2(9, 0, 7, 10)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6yuje")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pw4sh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rc3lf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ntst")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ke8bf")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]

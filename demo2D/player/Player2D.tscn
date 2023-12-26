@@ -1,0 +1,180 @@
+[gd_scene load_steps=34 format=3 uid="uid://c5r63ftyjmauq"]
+
+[ext_resource type="Script" path="res://demo2D/player/Player2D.gd" id="1_6f2q6"]
+[ext_resource type="AnimationLibrary" uid="uid://cayc1k5kyk6id" path="res://demo2D/player/player2D-AnimationLibrary.tres" id="2_j36jf"]
+[ext_resource type="Script" path="res://addons/ase_import/AseAnimationPlayer.gd" id="3_6wfyo"]
+[ext_resource type="Script" path="res://addons/ase_import/AseAnimationTree.gd" id="4_p51tn"]
+[ext_resource type="AudioStream" uid="uid://ccj4x5ffiucst" path="res://audio/jump.wav" id="6_fovw3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hyt81"]
+size = Vector2(10, 26)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_k7gtx"]
+load_path = "res://.godot/imported/Body.png-8cd980a124f9fca6c68eb885ebb56472.ctex"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_m0qtx"]
+animation = &"<import>/air_loop"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_cvsfl"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_m0qtx")
+nodes/Animation/position = Vector2(30, 90)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jsmyu"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ywikc"]
+advance_mode = 2
+advance_condition = &"on_floor"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_85u7w"]
+states/air_loop/node = SubResource("AnimationNodeBlendTree_cvsfl")
+states/air_loop/position = Vector2(521, 99)
+transitions = ["Start", "air_loop", SubResource("AnimationNodeStateMachineTransition_jsmyu"), "air_loop", "End", SubResource("AnimationNodeStateMachineTransition_ywikc")]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w7aha"]
+animation = &"<import>/idle_loop"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_q72os"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_w7aha")
+nodes/Animation/position = Vector2(30, 90)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bjnva"]
+animation = &"<import>/run_loop"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ebp8w"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_bjnva")
+nodes/Animation/position = Vector2(20, 100)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_yy3bx"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ufbwm"]
+advance_mode = 2
+advance_condition = &"not_on_floor"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_71xbx"]
+advance_mode = 2
+advance_condition = &"running"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rvf3x"]
+priority = 2
+advance_mode = 2
+advance_condition = &"not_running"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oxiuf"]
+advance_mode = 2
+advance_condition = &"not_on_floor"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_h7dwx"]
+states/idle_loop/node = SubResource("AnimationNodeBlendTree_q72os")
+states/idle_loop/position = Vector2(524.5, 99.25)
+states/run_loop/node = SubResource("AnimationNodeBlendTree_ebp8w")
+states/run_loop/position = Vector2(524.75, 238.5)
+transitions = ["Start", "idle_loop", SubResource("AnimationNodeStateMachineTransition_yy3bx"), "idle_loop", "End", SubResource("AnimationNodeStateMachineTransition_ufbwm"), "idle_loop", "run_loop", SubResource("AnimationNodeStateMachineTransition_71xbx"), "run_loop", "idle_loop", SubResource("AnimationNodeStateMachineTransition_rvf3x"), "run_loop", "End", SubResource("AnimationNodeStateMachineTransition_oxiuf")]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4mv71"]
+animation = &"<import>/jump"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_3722i"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_4mv71")
+nodes/Animation/position = Vector2(50, 100)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_p7wrm"]
+animation = &"<import>/jump_finish"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_u5x13"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_p7wrm")
+nodes/Animation/position = Vector2(70, 100)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_u0wdu"]
+advance_mode = 2
+advance_condition = &"on_floor"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sa02j"]
+advance_mode = 2
+advance_condition = &"not_on_floor"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8xdg4"]
+advance_mode = 0
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e0bxx"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ea3lr"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ggk7q"]
+advance_mode = 2
+advance_condition = &"falling"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_xhn4n"]
+states/End/position = Vector2(869, 99.2269)
+states/air_states/node = SubResource("AnimationNodeStateMachine_85u7w")
+states/air_states/position = Vector2(527.708, -43.0925)
+states/floor_states/node = SubResource("AnimationNodeStateMachine_h7dwx")
+states/floor_states/position = Vector2(527.708, 98.4538)
+states/jump/node = SubResource("AnimationNodeBlendTree_3722i")
+states/jump/position = Vector2(162.152, -43.1075)
+states/jump_finish/node = SubResource("AnimationNodeBlendTree_u5x13")
+states/jump_finish/position = Vector2(345.805, -42.1225)
+transitions = ["air_states", "floor_states", SubResource("AnimationNodeStateMachineTransition_u0wdu"), "floor_states", "air_states", SubResource("AnimationNodeStateMachineTransition_sa02j"), "floor_states", "End", SubResource("AnimationNodeStateMachineTransition_8xdg4"), "Start", "floor_states", SubResource("AnimationNodeStateMachineTransition_e0bxx"), "jump_finish", "air_states", SubResource("AnimationNodeStateMachineTransition_ea3lr"), "jump", "jump_finish", SubResource("AnimationNodeStateMachineTransition_ggk7q")]
+graph_offset = Vector2(5.1, -105.458)
+
+[node name="Player2D" type="CharacterBody2D"]
+collision_mask = 28
+script = ExtResource("1_6f2q6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -13)
+shape = SubResource("RectangleShape2D_hyt81")
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="Body" type="Sprite2D" parent="Sprites"]
+texture_filter = 1
+position = Vector2(0, -15)
+texture = SubResource("CompressedTexture2D_k7gtx")
+offset = Vector2(3.5, 1)
+region_enabled = true
+region_rect = Rect2(26, 29, 25, 30)
+
+[node name="AseAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"<import>": ExtResource("2_j36jf")
+}
+autoplay = "<import>/idle_loop"
+script = ExtResource("3_6wfyo")
+import_animation_library = ExtResource("2_j36jf")
+
+[node name="AseAnimationTree" type="AnimationTree" parent="."]
+active = false
+libraries = {
+"<import>": ExtResource("2_j36jf")
+}
+tree_root = SubResource("AnimationNodeStateMachine_xhn4n")
+anim_player = NodePath("../AseAnimationPlayer")
+parameters/conditions/falling = false
+parameters/conditions/not_on_floor = true
+parameters/conditions/on_floor = false
+parameters/air_states/conditions/on_floor = false
+parameters/floor_states/conditions/not_on_floor = true
+parameters/floor_states/conditions/not_running = true
+parameters/floor_states/conditions/running = false
+script = ExtResource("4_p51tn")
+parameters/conditions/falling = false
+parameters/conditions/not_falling = null
+parameters/conditions/not_on_floor = true
+parameters/conditions/on_floor = false
+parameters/conditions/not_running = null
+parameters/conditions/running = null
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="JumpAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_fovw3")

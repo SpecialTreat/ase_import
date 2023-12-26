@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj6kr0nh7bch1"]
+
+[ext_resource type="PackedScene" uid="uid://gqhw4px4git1" path="res://demo3D/level/Level3D.tscn" id="1_owauo"]
+[ext_resource type="PackedScene" uid="uid://c10xu7oultsg3" path="res://demo3D/player/Player3D.tscn" id="2_pc638"]
+[ext_resource type="Environment" uid="uid://dri1750eghgja" path="res://default_env.tres" id="3_ne6n4"]
+
+[node name="Game3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("3_ne6n4")
+
+[node name="Level3D" parent="." instance=ExtResource("1_owauo")]
+
+[node name="Player3D" parent="." instance=ExtResource("2_pc638")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)

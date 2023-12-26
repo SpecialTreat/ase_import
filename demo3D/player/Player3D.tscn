@@ -1,0 +1,181 @@
+[gd_scene load_steps=34 format=3 uid="uid://c10xu7oultsg3"]
+
+[ext_resource type="Script" path="res://demo3D/player/Player3D.gd" id="1_uq2jp"]
+[ext_resource type="Texture2D" uid="uid://c7phiu036yf5k" path="res://demo3D/player/player3D-Sprites/Body.png" id="2_p58dk"]
+[ext_resource type="AnimationLibrary" uid="uid://pcmn203q1n45" path="res://demo3D/player/player3D-AnimationLibrary.tres" id="3_jcu6x"]
+[ext_resource type="Script" path="res://addons/ase_import/AseAnimationPlayer.gd" id="4_q02p2"]
+[ext_resource type="Script" path="res://addons/ase_import/AseAnimationTree.gd" id="5_a2388"]
+[ext_resource type="AudioStream" uid="uid://ccj4x5ffiucst" path="res://audio/jump.wav" id="6_sya56"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_aiy15"]
+height = 1.3
+radius = 0.25
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_m0qtx"]
+animation = &"<import>/air_loop"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_cvsfl"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_m0qtx")
+nodes/Animation/position = Vector2(30, 90)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jsmyu"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ywikc"]
+advance_mode = 2
+advance_condition = &"on_floor"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_85u7w"]
+states/air_loop/node = SubResource("AnimationNodeBlendTree_cvsfl")
+states/air_loop/position = Vector2(521, 99)
+transitions = ["Start", "air_loop", SubResource("AnimationNodeStateMachineTransition_jsmyu"), "air_loop", "End", SubResource("AnimationNodeStateMachineTransition_ywikc")]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w7aha"]
+animation = &"<import>/idle_loop"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_q72os"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_w7aha")
+nodes/Animation/position = Vector2(30, 90)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bjnva"]
+animation = &"<import>/run_loop"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ebp8w"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_bjnva")
+nodes/Animation/position = Vector2(20, 100)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_yy3bx"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ufbwm"]
+advance_mode = 2
+advance_condition = &"not_on_floor"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_71xbx"]
+advance_mode = 2
+advance_condition = &"running"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rvf3x"]
+priority = 2
+advance_mode = 2
+advance_condition = &"not_running"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oxiuf"]
+advance_mode = 2
+advance_condition = &"not_on_floor"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_h7dwx"]
+states/idle_loop/node = SubResource("AnimationNodeBlendTree_q72os")
+states/idle_loop/position = Vector2(524.5, 99.25)
+states/run_loop/node = SubResource("AnimationNodeBlendTree_ebp8w")
+states/run_loop/position = Vector2(524.75, 238.5)
+transitions = ["Start", "idle_loop", SubResource("AnimationNodeStateMachineTransition_yy3bx"), "idle_loop", "End", SubResource("AnimationNodeStateMachineTransition_ufbwm"), "idle_loop", "run_loop", SubResource("AnimationNodeStateMachineTransition_71xbx"), "run_loop", "idle_loop", SubResource("AnimationNodeStateMachineTransition_rvf3x"), "run_loop", "End", SubResource("AnimationNodeStateMachineTransition_oxiuf")]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4mv71"]
+animation = &"<import>/jump"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_3722i"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_4mv71")
+nodes/Animation/position = Vector2(50, 100)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_p7wrm"]
+animation = &"<import>/jump_finish"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_u5x13"]
+nodes/Animation/node = SubResource("AnimationNodeAnimation_p7wrm")
+nodes/Animation/position = Vector2(70, 100)
+node_connections = [&"output", 0, &"Animation"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_u0wdu"]
+advance_mode = 2
+advance_condition = &"on_floor"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sa02j"]
+advance_mode = 2
+advance_condition = &"not_on_floor"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8xdg4"]
+advance_mode = 0
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e0bxx"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ea3lr"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ggk7q"]
+advance_mode = 2
+advance_condition = &"falling"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_xhn4n"]
+states/End/position = Vector2(869, 99.2269)
+states/air_states/node = SubResource("AnimationNodeStateMachine_85u7w")
+states/air_states/position = Vector2(527.708, -43.0925)
+states/floor_states/node = SubResource("AnimationNodeStateMachine_h7dwx")
+states/floor_states/position = Vector2(527.708, 98.4538)
+states/jump/node = SubResource("AnimationNodeBlendTree_3722i")
+states/jump/position = Vector2(162.152, -43.1075)
+states/jump_finish/node = SubResource("AnimationNodeBlendTree_u5x13")
+states/jump_finish/position = Vector2(345.805, -42.1225)
+transitions = ["air_states", "floor_states", SubResource("AnimationNodeStateMachineTransition_u0wdu"), "floor_states", "air_states", SubResource("AnimationNodeStateMachineTransition_sa02j"), "floor_states", "End", SubResource("AnimationNodeStateMachineTransition_8xdg4"), "Start", "floor_states", SubResource("AnimationNodeStateMachineTransition_e0bxx"), "jump_finish", "air_states", SubResource("AnimationNodeStateMachineTransition_ea3lr"), "jump", "jump_finish", SubResource("AnimationNodeStateMachineTransition_ggk7q")]
+graph_offset = Vector2(89.25, -164.296)
+
+[node name="Player3D" type="CharacterBody3D"]
+collision_mask = 28
+script = ExtResource("1_uq2jp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_aiy15")
+
+[node name="Sprites" type="Node3D" parent="."]
+
+[node name="Body" type="Sprite3D" parent="Sprites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+offset = Vector2(0, -2.5)
+pixel_size = 0.05
+billboard = 2
+texture_filter = 0
+texture = ExtResource("2_p58dk")
+region_enabled = true
+region_rect = Rect2(66, 119, 22, 27)
+
+[node name="AseAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"<import>": ExtResource("3_jcu6x")
+}
+autoplay = "<import>/idle_loop"
+script = ExtResource("4_q02p2")
+import_animation_library = ExtResource("3_jcu6x")
+
+[node name="AseAnimationTree" type="AnimationTree" parent="."]
+libraries = {
+"<import>": ExtResource("3_jcu6x")
+}
+tree_root = SubResource("AnimationNodeStateMachine_xhn4n")
+anim_player = NodePath("../AseAnimationPlayer")
+parameters/conditions/falling = false
+parameters/conditions/not_on_floor = true
+parameters/conditions/on_floor = false
+parameters/air_states/conditions/on_floor = false
+parameters/floor_states/conditions/not_on_floor = true
+parameters/floor_states/conditions/not_running = true
+parameters/floor_states/conditions/running = false
+script = ExtResource("5_a2388")
+parameters/conditions/falling = false
+parameters/conditions/not_falling = null
+parameters/conditions/not_on_floor = true
+parameters/conditions/on_floor = false
+parameters/conditions/not_running = null
+parameters/conditions/running = null
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.92388, 0.382683, 0, -0.382683, 0.92388, 0, 2.5, 7)
+current = true
+
+[node name="JumpAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_sya56")
