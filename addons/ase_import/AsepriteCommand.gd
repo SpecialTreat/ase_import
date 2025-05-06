@@ -463,6 +463,8 @@ func export_occluders(export_results: Array, options: Dictionary) -> Array[Dicti
 		occluders_node.name = occluders_node_path.rsplit("/", false, 1)[-1]
 		occluders_node.set_script(preload("AseLightOccluder2D.gd"))
 
+		var existing_polygons: Dictionary = {}
+
 		var updated_frames: Array = []
 		for frame in import_data.json_data.frames:
 			var frame_rect: Rect2 = Rect2(
@@ -471,26 +473,56 @@ func export_occluders(export_results: Array, options: Dictionary) -> Array[Dicti
 				int(frame.frame.w),
 				int(frame.frame.h)
 			)
-			frame["occluderNode"] = frame["filename"].get_basename().replace("/", "__")
-			frame["occluderPolygons"] = AsepriteKit.image_rect_to_occluder_polygons(
+			var occluder_node_name: String = frame["filename"].get_basename().replace("/", "__")
+			var polygons: Array = AsepriteKit.image_rect_to_occluder_polygons(
 				image,
 				frame_rect,
 				bool(options.get("occluders/include_edges", false)),
 				int(options.get("occluders/shrink", 1)),
 				int(options.get("occluders/grow", 1)),
 				float(options.get("occluders/simplify", 0.1)),
-				bool(options.get("occluders/convex_hull", false))
+				bool(options.get("occluders/convex_hull", false)),
+				bool(options.get("occluders/single_hull", false)),
+				int(options.get("occluders/post_shrink", 0)),
+				int(options.get("occluders/post_grow", 0))
 			)
-			updated_frames.append(frame)
+			if polygons in existing_polygons:
+				frame["occluderNode"] = existing_polygons[polygons]
+				frame["occluderPolygons"] = polygons
+				updated_frames.append(frame)
+			else:
+				existing_polygons[polygons] = occluder_node_name
+				frame["occluderNode"] = occluder_node_name
+				frame["occluderPolygons"] = polygons
+				updated_frames.append(frame)
 
-			var occluders_container: Node2D = Node2D.new()
-			occluders_container.name = frame["occluderNode"]
-			occluders_container.visible = false
-			occluders_node.add_child(occluders_container)
-			occluders_container.owner = occluders_node
+				var occluders_container: Node2D
+				if frame["occluderPolygons"].size() != 1:
+					occluders_container = Node2D.new()
+					occluders_container.name = frame["occluderNode"]
+					occluders_container.visible = false
+					occluders_node.add_child(occluders_container)
+					occluders_container.owner = occluders_node
 
-			# if not occluders_node.active_occluder:
-			# 	occluders_node.active_occluder = frame["occluderNode"]
+				var index: int = 0
+				for dict_polygon in frame["occluderPolygons"]:
+					var occluder: LightOccluder2D = LightOccluder2D.new()
+					var occluder_polygon: OccluderPolygon2D = OccluderPolygon2D.new()
+					occluder_polygon.polygon = AsepriteKit.dict_to_vec_polygon(dict_polygon)
+					occluder.occluder = occluder_polygon
+					if frame["occluderPolygons"].size() != 1:
+						occluder.name = "Occluder%s" % index
+						occluders_container.add_child(occluder)
+					else:
+						occluder.name = frame["occluderNode"]
+						occluder.visible = false
+						occluders_node.add_child(occluder)
+						occluders_container = occluder
+					occluder.owner = occluders_node
+					index += 1
+
+				# if not occluders_node.active_occluder:
+				# 	occluders_node.active_occluder = frame["occluderNode"]
 
 			# Get the center of the frame in the original size
 			var source_size : Dictionary = frame.sourceSize
@@ -507,8 +539,8 @@ func export_occluders(export_results: Array, options: Dictionary) -> Array[Dicti
 			var offset_y := trim_rect_center_y - source_center_y
 			if options.get("animation/invert_y", false):
 				offset_y = -offset_y
-			var offset: = Vector2(offset_x, offset_y)
-			occluders_container.position = offset
+			#var offset: = Vector2(offset_x, offset_y)
+			frame["occluderNodePosition"] = {"x": offset_x, "y": offset_y}
 
 #				var occluder_image: Image = AsepriteKit.image_rect_to_occluder_image(
 #					image,
@@ -524,17 +556,6 @@ func export_occluders(export_results: Array, options: Dictionary) -> Array[Dicti
 #				occluder_sprite.name = "Sprite"
 #				occluders_container.add_child(occluder_sprite)
 #				occluder_sprite.owner = occluders_node
-
-			var index: int = 0
-			for dict_polygon in frame["occluderPolygons"]:
-				var occluder: LightOccluder2D = LightOccluder2D.new()
-				occluder.name = "Occluder%s" % index
-				var occluder_polygon: OccluderPolygon2D = OccluderPolygon2D.new()
-				occluder_polygon.polygon = AsepriteKit.dict_to_vec_polygon(dict_polygon)
-				occluder.occluder = occluder_polygon
-				occluders_container.add_child(occluder)
-				occluder.owner = occluders_node
-				index += 1
 
 		var occluders_scene: PackedScene = PackedScene.new()
 		occluders_scene.pack(occluders_node)

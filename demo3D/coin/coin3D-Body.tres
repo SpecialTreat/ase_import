@@ -1,45 +1,44 @@
 [gd_resource type="SpriteFrames" load_steps=7 format=3 uid="uid://da2mc5od1ofwe"]
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qgm0i"]
-load_path = "res://.godot/imported/coin3D-Body.png-82e1f6d359b2ceee7ad3ec11df749d23.ctex"
+[ext_resource type="Texture2D" uid="uid://cjucb8l5xmbh4" path="res://demo3D/coin/coin3D-Body.png" id="1_dox35"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6yuje"]
-atlas = SubResource("CompressedTexture2D_qgm0i")
+[sub_resource type="AtlasTexture" id="AtlasTexture_dox35"]
+atlas = ExtResource("1_dox35")
 region = Rect2(0, 0, 9, 10)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pw4sh"]
-atlas = SubResource("CompressedTexture2D_qgm0i")
+[sub_resource type="AtlasTexture" id="AtlasTexture_mw3vd"]
+atlas = ExtResource("1_dox35")
 region = Rect2(9, 0, 7, 10)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_rc3lf"]
-atlas = SubResource("CompressedTexture2D_qgm0i")
+[sub_resource type="AtlasTexture" id="AtlasTexture_lt71x"]
+atlas = ExtResource("1_dox35")
 region = Rect2(0, 10, 6, 10)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3ntst"]
-atlas = SubResource("CompressedTexture2D_qgm0i")
+[sub_resource type="AtlasTexture" id="AtlasTexture_v7f0w"]
+atlas = ExtResource("1_dox35")
 region = Rect2(6, 10, 5, 10)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ke8bf"]
-atlas = SubResource("CompressedTexture2D_qgm0i")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ooh65"]
+atlas = ExtResource("1_dox35")
 region = Rect2(9, 0, 7, 10)
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6yuje")
+"texture": SubResource("AtlasTexture_dox35")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_pw4sh")
+"texture": SubResource("AtlasTexture_mw3vd")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_rc3lf")
+"texture": SubResource("AtlasTexture_lt71x")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_3ntst")
+"texture": SubResource("AtlasTexture_v7f0w")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ke8bf")
+"texture": SubResource("AtlasTexture_ooh65")
 }],
 "loop": true,
 "name": &"default",

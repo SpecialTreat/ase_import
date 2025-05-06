@@ -51,10 +51,13 @@ const IMPORT_OPTIONS_DEFAULT: Array[Dictionary] = [
 	{"name": "occluders/enable_generation", "default_value": false},
 	{"name": "occluders/exclude_pattern", "default_value": "^_"},
 	{"name": "occluders/include_edges", "default_value": false},
-	{"name": "occluders/shrink", "default_value": 1},
-	{"name": "occluders/grow", "default_value": 1},
+	{"name": "occluders/shrink", "default_value": 0},
+	{"name": "occluders/grow", "default_value": 0},
+	{"name": "occluders/post_shrink", "default_value": 0},
+	{"name": "occluders/post_grow", "default_value": 0},
 	{"name": "occluders/simplify", "default_value": 0.1},
 	{"name": "occluders/convex_hull", "default_value": false},
+	{"name": "occluders/single_hull", "default_value": true},
 	{"name": "occluders/track_name_template", "default_value": "{layer}_LightOccluder"},
 ]
 
@@ -100,19 +103,38 @@ static func translate_vec_polygon(vec_polygon: PackedVector2Array, offset: Vecto
 	return polygon
 
 
-static func image_to_occluder_polygons(image: Image, include_edges: bool, shrink: int, grow: int, simplify: float, convex: bool) -> Array:
+static func image_to_occluder_polygons(image: Image, include_edges: bool, shrink: int, grow: int, simplify: float, convex: bool, post_shrink: int, post_grow: int) -> Array:
 	var rect: Rect2 = Rect2(Vector2.ZERO, image.get_size())
-	return image_rect_to_occluder_polygons(image, rect, include_edges, shrink, grow, simplify, convex)
+	return image_rect_to_occluder_polygons(image, rect, include_edges, shrink, grow, simplify, convex, post_shrink, post_grow)
 
 
-static func image_rect_to_occluder_polygons(image: Image, rect: Rect2, include_edges: bool, shrink: int, grow: int, simplify: float, convex: bool) -> Array:
-	var bitmap: = image_rect_to_occluder_bitmap(image, rect, include_edges, shrink, grow)
-	var polygons: = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, rect.size), simplify)
-	if convex:
-		var convex_polygons: Array = []
+static func image_rect_to_occluder_polygons(image: Image, rect: Rect2, include_edges: bool, shrink: int, grow: int, simplify: float, convex: bool, single_hull: bool = true, post_shrink: int = 0, post_grow: int = 0) -> Array:
+	var bitmap: BitMap = image_rect_to_occluder_bitmap(image, rect, include_edges, shrink, grow)
+	var polygons: Array = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, rect.size), simplify)
+
+	if post_shrink != 0:
+		var modified_polygons: Array = []
 		for polygon in polygons:
-			convex_polygons.append(Geometry2D.convex_hull(polygon))
-		polygons = convex_polygons
+			modified_polygons.append_array(Geometry2D.offset_polygon(polygon, float(-post_shrink), Geometry2D.JOIN_MITER))
+		polygons = modified_polygons
+
+	if post_grow != 0:
+		var modified_polygons: Array = []
+		for polygon in polygons:
+			modified_polygons.append_array(Geometry2D.offset_polygon(polygon, float(post_grow), Geometry2D.JOIN_MITER))
+		polygons = modified_polygons
+
+	if convex:
+		if single_hull:
+			var point_cloud: Array = []
+			for polygon in polygons:
+				point_cloud.append_array(polygon)
+			polygons = [Array(Geometry2D.convex_hull(point_cloud))]
+		else:
+			var convex_polygons: Array = []
+			for polygon in polygons:
+				convex_polygons.append(Array(Geometry2D.convex_hull(polygon)))
+			polygons = convex_polygons
 
 	var dict_polygons: Array = []
 	for polygon in polygons:

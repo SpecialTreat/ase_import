@@ -188,8 +188,12 @@ func make_resource(
 
 		if options.get("occluders/enable_generation", false) and frames and "occluderNode" in frames[0]:
 			var track_name_template: String = options.get("occluders/track_name_template", "{layer}_LightOccluder")
-			tracks["occluders"] = {
-				"path": "%s:active_occluder" % AsepriteKit.render_template(track_name_template, export_info)
+			var track_name: String = AsepriteKit.render_template(track_name_template, export_info)
+			tracks["occluders_path"] = {
+				"path": "%s:active_occluder" % track_name,
+			}
+			tracks["occluders_position"] = {
+				"path": "%s:position" % track_name,
 			}
 
 		# Iterate over each tag (animation)
@@ -272,7 +276,9 @@ func make_resource(
 					animation.track_insert_key(tracks.position.idx, time, position * pixel_scale)
 
 				if options.get("occluders/enable_generation", false) and "occluderNode" in frame:
-					animation.track_insert_key(tracks.occluders.idx, time, frame.occluderNode)
+					animation.track_insert_key(tracks.occluders_path.idx, time, frame.occluderNode)
+					var pos: Vector2 = Vector2(frame.occluderNodePosition.x, frame.occluderNodePosition.y)
+					animation.track_insert_key(tracks.occluders_position.idx, time, pos)
 
 				# Add up the current frame's duration for the next key position
 				time += frame.duration / 1000.0

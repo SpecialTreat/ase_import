@@ -80,7 +80,7 @@ func load(filepath : String) -> int:
 
 
 func save(filepath : String) -> int:
-	var file := FileAccess.open(filepath, FileAccess.READ)
+	var file := FileAccess.open(filepath, FileAccess.WRITE)
 
 	var err: int = OK
 	if err != OK:

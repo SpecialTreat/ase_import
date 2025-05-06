@@ -1,9 +1,9 @@
 [gd_scene load_steps=34 format=3 uid="uid://c5r63ftyjmauq"]
 
-[ext_resource type="Script" path="res://demo2D/player/Player2D.gd" id="1_6f2q6"]
+[ext_resource type="Script" uid="uid://r3me1icihayq" path="res://demo2D/player/Player2D.gd" id="1_6f2q6"]
 [ext_resource type="AnimationLibrary" uid="uid://cayc1k5kyk6id" path="res://demo2D/player/player2D-AnimationLibrary.tres" id="2_j36jf"]
-[ext_resource type="Script" path="res://addons/ase_import/AseAnimationPlayer.gd" id="3_6wfyo"]
-[ext_resource type="Script" path="res://addons/ase_import/AseAnimationTree.gd" id="4_p51tn"]
+[ext_resource type="Script" uid="uid://bafdn0kb0ya4l" path="res://addons/ase_import/AseAnimationPlayer.gd" id="3_6wfyo"]
+[ext_resource type="Script" uid="uid://mmobjkpa1721" path="res://addons/ase_import/AseAnimationTree.gd" id="4_p51tn"]
 [ext_resource type="AudioStream" uid="uid://ccj4x5ffiucst" path="res://audio/jump.wav" id="6_fovw3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hyt81"]

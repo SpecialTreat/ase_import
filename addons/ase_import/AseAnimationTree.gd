@@ -41,7 +41,7 @@ var parameter_properties: Dictionary = {}
 var animation_playbacks: Dictionary = {}
 
 
-func _ready():
+func _ready() -> void:
 	if tree_root is AnimationNodeStateMachine:
 		state_machine_nodes[""] = tree_root
 

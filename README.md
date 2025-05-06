@@ -97,11 +97,14 @@ You must set the Aseprite Command Path in Editor Settings to point to your where
 | :--- | :--- | :--- |
 | occluders/enable_generation | false | Generate light occluders for spritesheet |
 | occluders/exclude_pattern | "^_" | Exclude matching layers from occluder generation |
-| occluders/include_edges | false | Occluders extend to edge of image |
-| occluders/shrink | 1 | Pixels to shrink occluder polygon |
-| occluders/grow | 1 | Pixels to grow occluder polygon (use with shrink to close small gaps) |
-| occluders/simplify | 0.1 | How much to simplify occluder polygon |
-| occluders/convex_hull | false | Force convex occluder polygon |
+| occluders/include_edges | false | Occluders extend to edge of opaque pixels in image |
+| occluders/shrink | 0 | Pixels to shrink opaque areas in image (similar to erode filter) |
+| occluders/grow | 0 | Pixels to grow opaque areas in image (similar to dilate filter, use with shrink to close small gaps) |
+| occluders/post_shrink | 0 | Attempts to shrink generated occluder polygons by given number of pixels |
+| occluders/post_grow | 0 | Attempts to grow occluder polygons by given number of pixels  |
+| occluders/simplify | 0.1 | How much to simplify occluder polygons |
+| occluders/convex_hull | false | Force convex occluder polygons, may generate multiple polygons for disconnected areas of sprite |
+| occluders/single_hull | true | If true, merges all generated occluder polygons down to a single convex hull. Ignored if convex_hull is false |
 | occluders/track_name_template | "\{layer\}_LightOccluder" | Occluder filename |
 
 

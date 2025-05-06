@@ -1,10 +1,10 @@
 [gd_scene load_steps=34 format=3 uid="uid://c10xu7oultsg3"]
 
-[ext_resource type="Script" path="res://demo3D/player/Player3D.gd" id="1_uq2jp"]
+[ext_resource type="Script" uid="uid://c0rem2mwt06lr" path="res://demo3D/player/Player3D.gd" id="1_uq2jp"]
 [ext_resource type="Texture2D" uid="uid://c7phiu036yf5k" path="res://demo3D/player/player3D-Sprites/Body.png" id="2_p58dk"]
 [ext_resource type="AnimationLibrary" uid="uid://pcmn203q1n45" path="res://demo3D/player/player3D-AnimationLibrary.tres" id="3_jcu6x"]
-[ext_resource type="Script" path="res://addons/ase_import/AseAnimationPlayer.gd" id="4_q02p2"]
-[ext_resource type="Script" path="res://addons/ase_import/AseAnimationTree.gd" id="5_a2388"]
+[ext_resource type="Script" uid="uid://bafdn0kb0ya4l" path="res://addons/ase_import/AseAnimationPlayer.gd" id="4_q02p2"]
+[ext_resource type="Script" uid="uid://mmobjkpa1721" path="res://addons/ase_import/AseAnimationTree.gd" id="5_a2388"]
 [ext_resource type="AudioStream" uid="uid://ccj4x5ffiucst" path="res://audio/jump.wav" id="6_sya56"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_aiy15"]
