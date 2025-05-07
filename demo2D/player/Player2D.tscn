@@ -146,7 +146,7 @@ region_rect = Rect2(26, 29, 25, 30)
 
 [node name="AseAnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"<import>": ExtResource("2_j36jf")
+&"<import>": ExtResource("2_j36jf")
 }
 autoplay = "<import>/idle_loop"
 script = ExtResource("3_6wfyo")
@@ -154,9 +154,6 @@ import_animation_library = ExtResource("2_j36jf")
 
 [node name="AseAnimationTree" type="AnimationTree" parent="."]
 active = false
-libraries = {
-"<import>": ExtResource("2_j36jf")
-}
 tree_root = SubResource("AnimationNodeStateMachine_xhn4n")
 anim_player = NodePath("../AseAnimationPlayer")
 parameters/conditions/falling = false
@@ -167,6 +164,7 @@ parameters/floor_states/conditions/not_on_floor = true
 parameters/floor_states/conditions/not_running = true
 parameters/floor_states/conditions/running = false
 script = ExtResource("4_p51tn")
+debug_toggle = true
 parameters/conditions/falling = false
 parameters/conditions/not_falling = null
 parameters/conditions/not_on_floor = true

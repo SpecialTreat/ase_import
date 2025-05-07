@@ -70,7 +70,7 @@ static func get_aseprite_command() -> String:
 static var has_aborted: bool = false
 
 
-static func print_invalid_aseprite_command():
+static func print_invalid_aseprite_command() -> void:
 	if not has_aborted:
 		var editor_settings: EditorSettings = EditorInterface.get_editor_settings()
 		has_aborted = true

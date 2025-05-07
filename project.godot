@@ -15,6 +15,14 @@ run/main_scene="res://demo2D/Game2D.tscn"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 
+[debug]
+
+gdscript/warnings/exclude_addons=false
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/inferred_declaration=1
+gdscript/warnings/unsafe_property_access=1
+gdscript/warnings/unsafe_call_argument=1
+
 [display]
 
 window/stretch/mode="canvas_items"

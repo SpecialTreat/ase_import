@@ -103,7 +103,7 @@ func get_frame_array() -> Array:
 	return frame_data
 
 
-func set_frame_array(value: Array):
+func set_frame_array(value: Array) -> void:
 	if json_data.frames is Dictionary:
 		for frame in value:
 			json_data.frames[frame.filename] = frame

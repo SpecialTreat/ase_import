@@ -7,7 +7,7 @@ static var ANIM_TREE_NODE_REGEX: RegEx = RegEx.new()
 static var ANIM_TREE_CONDITION_REGEX: RegEx = RegEx.new()
 
 
-static func _static_init():
+static func _static_init() -> void:
 	ANIM_TREE_NODE_REGEX.compile("^(?:nodes|states)/(.+?)/node")
 	ANIM_TREE_CONDITION_REGEX.compile("^parameters(?:/|/(.+?)/)conditions/(\\w+)")
 
@@ -23,27 +23,27 @@ static func string_order_by_length_desc(a: String, b: String) -> bool:
 @export var debug_toggle: bool = false
 
 var animation_player: AnimationPlayer
-var transition_params: Dictionary = {
-#	"transition_node_name/current": {
+var transition_params: Dictionary[StringName, Dictionary] = {
+#	&"transition_node_name/current": {
 #	    "input_name_zero": 0,
 #	    "input_name_one": 1,
 #	}
 }
-var transition_params_by_input: Dictionary = {
+var transition_params_by_input: Dictionary[StringName, StringName] = {
 #	"input_name_zero": "transition_node_name/current",
 #	"input_name_one": "transition_node_name/current",
 }
 
-var state_machine_nodes: Dictionary = {}
-var condition_properties: Dictionary = {}
-var condition_property_list: Dictionary = {}
-var parameter_properties: Dictionary = {}
-var animation_playbacks: Dictionary = {}
+var state_machine_nodes: Dictionary[StringName, AnimationNode] = {}
+var condition_properties: Dictionary[StringName, Array] = {}
+var condition_property_list: Dictionary[StringName, Dictionary] = {}
+var parameter_properties: Dictionary[StringName, StringName] = {}
+var animation_playbacks: Dictionary[StringName, AnimationNodeStateMachinePlayback] = {}
 
 
 func _ready() -> void:
 	if tree_root is AnimationNodeStateMachine:
-		state_machine_nodes[""] = tree_root
+		state_machine_nodes[&""] = tree_root
 
 	_collect_animation_nodes(tree_root, "")
 	_collect_animation_parameters()
@@ -55,36 +55,51 @@ func _ready() -> void:
 		active = true
 
 	#print("state_machine_nodes")
-	#print(JSON.stringify(state_machine_nodes, "    "))
+	##print(JSON.stringify(state_machine_nodes, "    "))
+	#print(state_machine_nodes)
 	#print("\n")
-
+#
 	#print("animation_playbacks")
-	#print(JSON.stringify(animation_playbacks, "    "))
+	##print(JSON.stringify(animation_playbacks, "    "))
+	#print(animation_playbacks)
 	#print("\n")
-
+#
 	#print("condition_properties")
-	#print(JSON.stringify(condition_properties, "    "))
+	##print(JSON.stringify(condition_properties, "    "))
+	#print(condition_properties)
 	#print("\n")
-
+#
 	#print("condition_property_list")
-	#print(JSON.stringify(condition_property_list, "    "))
+	##print(JSON.stringify(condition_property_list, "    "))
+	#print(condition_property_list)
 	#print("\n")
-
+#
 	#print("parameter_properties")
-	#print(JSON.stringify(parameter_properties, "    "))
+	##print(JSON.stringify(parameter_properties, "    "))
+	#print(parameter_properties)
+	#print("\n")
+#
+	#print("transition_params")
+	##print(JSON.stringify(transition_params, "    "))
+	#print(transition_params)
+	#print("\n")
+#
+	#print("transition_params_by_input")
+	##print(JSON.stringify(transition_params_by_input, "    "))
+	#print(transition_params_by_input)
 	#print("\n")
 
 
-func _collect_animation_nodes(root: AnimationNode, path: String):
+func _collect_animation_nodes(root: AnimationNode, path: String) -> void:
 	var tree_properties: Array[Dictionary] = root.get_property_list()
-	for prop in tree_properties:
+	for prop: Dictionary[String, Variant] in tree_properties:
 		var prop_name: String = prop["name"]
 		var result: RegExMatch = ANIM_TREE_NODE_REGEX.search(prop_name)
 		if result:
-			var node_name: String = result.get_string(1)
+			var node_name: StringName = result.get_string(1)
 			var anim_node: AnimationNode = root.get_node(node_name)
 			if anim_node is AnimationNodeTransition:
-				var transition_param: String = "parameters/%s/current" % node_name
+				var transition_param: StringName = "parameters/%s/current" % node_name
 				transition_params[transition_param] = {}
 				var index: int = 0
 				var input_count: int = anim_node.get_input_count()
@@ -96,29 +111,29 @@ func _collect_animation_nodes(root: AnimationNode, path: String):
 					index += 1
 
 			elif anim_node is AnimationNodeStateMachine:
-				var node_path: String = path.path_join(node_name) if path else node_name
+				var node_path: StringName = StringName(path.path_join(node_name)) if path else node_name
 				state_machine_nodes[node_path] = anim_node
 				_collect_animation_nodes(anim_node, node_path)
 
-			elif node_name != "End" and node_name != "Start":
-				var playback_path: String = "parameters/%s/playback" % path if path else "parameters/playback"
+			elif node_name != &"End" and node_name != &"Start":
+				var playback_path: StringName = StringName("parameters/%s/playback" % path) if path else &"parameters/playback"
 				if playback_path in self:
 					animation_playbacks[node_name] = get(playback_path)
 
 
-func _collect_animation_parameters():
+func _collect_animation_parameters() -> void:
 	var param_regex: RegEx = RegEx.new()
-	var names: Array = state_machine_nodes.keys().filter(func(s): return s != "")
+	var names: Array = state_machine_nodes.keys().filter(func(s: String) -> bool: return s != "")
 	names.sort_custom(string_order_by_length_desc)
 	var names_pattern: String = "|".join(names)
 	var pattern: String = "^parameters(?:/(%s)/|/)(.+)$" % names_pattern
 	param_regex.compile(pattern)
 
-	for prop in get_property_list():
-		var prop_name: String = prop["name"]
+	for prop: Dictionary in get_property_list():
+		var prop_name: StringName = prop["name"]
 		var result: RegExMatch = ANIM_TREE_CONDITION_REGEX.search(prop_name)
 		if result:
-			var condition: String = result.get_string(2)
+			var condition: StringName = StringName(result.get_string(2))
 			if condition in condition_properties:
 				if not condition_properties[condition].has(prop_name):
 					condition_properties[condition].append(prop_name)
@@ -127,13 +142,13 @@ func _collect_animation_parameters():
 		else:
 			result = param_regex.search(prop_name)
 			if result:
-				var param: String = result.get_string(2)
-				if param != "playback":
+				var param: StringName = StringName(result.get_string(2))
+				if param != &"playback":
 					parameter_properties[param] = prop_name
 
 	condition_property_list = {}
-	for condition in condition_properties.keys():
-		var root_prop: String = "parameters/conditions".path_join(condition)
+	for condition: StringName in condition_properties.keys():
+		var root_prop: StringName = "parameters/conditions".path_join(condition)
 		if not condition_properties[condition].has(root_prop):
 			condition_properties[condition].append(root_prop)
 
@@ -161,22 +176,22 @@ func _collect_animation_parameters():
 	notify_property_list_changed()
 
 
-func _get_property_list():
+func _get_property_list() -> Array[Dictionary]:
 	return condition_property_list.values()
 
 
-func debug_animation(animation_type: String, animation_name: String) -> void:
+func debug_animation(animation_type: StringName, animation_name: StringName) -> void:
 	if not debug_toggle or not OS.is_debug_build():
 		return
 
 	print("anim_", animation_type, " [", Engine.get_physics_frames(), "]: ", get_parent().name, ".", animation_name)
 
 
-func debug_condition_change(condition: String, value: bool) -> void:
+func debug_condition_change(condition: StringName, value: Variant) -> void:
 	if not debug_toggle or not OS.is_debug_build():
 		return
 
-	var display_condition: String = condition
+	var display_condition: StringName = condition
 	var display_value: bool = value
 
 	if not condition in condition_properties:
@@ -186,18 +201,18 @@ func debug_condition_change(condition: String, value: bool) -> void:
 	if not condition in condition_properties:
 		return
 
-	for prop in condition_properties[condition]:
+	for prop: StringName in condition_properties[condition]:
 		if get(prop) != null:
 			if not not get(prop) != value:
 				print("anim_condition [", Engine.get_physics_frames(), "]: ", get_parent().name, ".", display_condition, " = ", display_value)
 			break
 
 
-func debug_parameter_change(parameter: String, value: bool) -> void:
+func debug_parameter_change(parameter: StringName, value: Variant) -> void:
 	if not debug_toggle or not OS.is_debug_build():
 		return
 
-	var prop: String = "parameters/" + parameter
+	var prop: StringName = "parameters/" + parameter
 	if get(prop) != null:
 		if not not get(prop) != value:
 			print("anim_parameter [", Engine.get_physics_frames(), "]: ", get_parent().name, ".", parameter, " = ", value)
@@ -221,12 +236,12 @@ func get_animation_time(animation_name: StringName) -> float:
 
 func start(animation_name: StringName, conditions: Dictionary = {}, duration: float = -1.0, advance_by: float = -1.0) -> void:
 	set_conditions(conditions, duration, advance_by)
-	debug_animation("start", animation_name)
+	debug_animation(&"start", animation_name)
 	if has_playback(animation_name):
 		get_playback(animation_name).start(animation_name)
 
 	elif animation_name in transition_params_by_input:
-		var param: String = transition_params_by_input[animation_name]
+		var param: StringName = transition_params_by_input[animation_name]
 		set(param, transition_params[param][animation_name])
 
 	else:
@@ -235,7 +250,7 @@ func start(animation_name: StringName, conditions: Dictionary = {}, duration: fl
 
 func restart(animation_name: StringName, conditions: Dictionary = {}, duration: float = -1.0, advance_by: float = -1.0) -> void:
 	set_conditions(conditions, duration, advance_by)
-	debug_animation("restart", animation_name)
+	debug_animation(&"restart", animation_name)
 	if has_playback(animation_name):
 		var playback: AnimationNodeStateMachinePlayback = get_playback(animation_name)
 		if playback.get_current_node() == animation_name:
@@ -244,7 +259,7 @@ func restart(animation_name: StringName, conditions: Dictionary = {}, duration: 
 		playback.start(animation_name)
 
 	elif animation_name in transition_params_by_input:
-		var param: String = transition_params_by_input[animation_name]
+		var param: StringName = transition_params_by_input[animation_name]
 		set(param, transition_params[param][animation_name])
 
 	else:
@@ -254,12 +269,12 @@ func restart(animation_name: StringName, conditions: Dictionary = {}, duration: 
 
 func travel(animation_name: StringName, conditions: Dictionary = {}, duration: float = -1.0, advance_by: float = -1.0) -> void:
 	set_conditions(conditions, duration, advance_by)
-	debug_animation("travel", animation_name)
+	debug_animation(&"travel", animation_name)
 	if has_playback(animation_name):
 		get_playback(animation_name).travel(animation_name)
 
 	elif animation_name in transition_params_by_input:
-		var param: String = transition_params_by_input[animation_name]
+		var param: StringName = transition_params_by_input[animation_name]
 		set(param, transition_params[param][animation_name])
 
 	else:
@@ -268,7 +283,7 @@ func travel(animation_name: StringName, conditions: Dictionary = {}, duration: f
 
 func retravel(animation_name: StringName, conditions: Dictionary = {}, duration: float = -1.0, advance_by: float = -1.0) -> void:
 	set_conditions(conditions, duration, advance_by)
-	debug_animation("retravel", animation_name)
+	debug_animation(&"retravel", animation_name)
 	if has_playback(animation_name):
 		var playback: AnimationNodeStateMachinePlayback = get_playback(animation_name)
 		if playback.get_current_node() == animation_name:
@@ -282,27 +297,27 @@ func retravel(animation_name: StringName, conditions: Dictionary = {}, duration:
 		push_warning("[SKIPPED] anim_retravel: %s.%s" % [get_parent().name, animation_name])
 
 
-func reset_conditions():
-	for condition in condition_properties:
-		for prop in condition_properties[condition]:
+func reset_conditions() -> void:
+	for condition: StringName in condition_properties:
+		for prop: StringName in condition_properties[condition]:
 			set(prop, condition.begins_with("not_"))
 
 
 func set_conditions(conditions: Dictionary, duration: float = -1.0, advance_by: float = -1.0) -> void:
-	for condition in conditions:
+	for condition: StringName in conditions:
 		set_condition(condition, conditions[condition], duration, advance_by)
 
 
-func set_condition(condition: String, value: bool, duration: float = -1.0, advance_by: float = -1.0) -> void:
+func set_condition(condition: StringName, value: Variant, duration: float = -1.0, advance_by: float = -1.0) -> void:
 	debug_condition_change(condition, value)
 
 	if condition in condition_properties:
-		for prop in condition_properties[condition]:
+		for prop: StringName in condition_properties[condition]:
 			set(prop, value)
 
-	var not_condition: String = "not_" + condition
+	var not_condition: StringName = "not_" + condition
 	if not_condition in condition_properties:
-		for prop in condition_properties[not_condition]:
+		for prop: StringName in condition_properties[not_condition]:
 			set(prop, not value)
 
 	if advance_by >= 0.0:
@@ -314,20 +329,20 @@ func set_condition(condition: String, value: bool, duration: float = -1.0, advan
 		if is_inside_tree():
 			debug_condition_change(condition, not value)
 			if condition in condition_properties:
-				for prop in condition_properties[condition]:
+				for prop: StringName in condition_properties[condition]:
 					set(prop, not value)
 
 			if not_condition in condition_properties:
-				for prop in condition_properties[not_condition]:
+				for prop: StringName in condition_properties[not_condition]:
 					set(prop, value)
 
 
 func set_parameters(parameters: Dictionary) -> void:
-	for parameter in parameters:
+	for parameter: StringName in parameters:
 		set_parameter(parameter, parameters[parameter])
 
 
-func set_parameter(parameter: String, value) -> void:
+func set_parameter(parameter: StringName, value: Variant) -> void:
 	debug_parameter_change(parameter, value)
 
 	if parameter in transition_params:

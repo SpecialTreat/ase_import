@@ -16,7 +16,7 @@ var import_plugin_sprite_frames: EditorImportPlugin
 var import_plugin_animation_library: EditorImportPlugin
 
 
-func _enter_tree():
+func _enter_tree() -> void:
 	add_project_settings()
 
 	import_plugin_texture2D = ImportPlugin_Texture2D.new()
@@ -32,7 +32,7 @@ func _enter_tree():
 
 
 
-func _exit_tree():
+func _exit_tree() -> void:
 	remove_import_plugin(import_plugin_texture2D)
 	remove_import_plugin(import_plugin_sprite_frames)
 	remove_import_plugin(import_plugin_animation_library)
@@ -47,7 +47,7 @@ func _exit_tree():
 	remove_project_settings()
 
 
-func add_project_settings():
+func add_project_settings() -> void:
 	var default_command_path: String = get_default_aseprite_command_path()
 	var editor_settings: EditorSettings = EditorInterface.get_editor_settings()
 	if not editor_settings.has_setting(SETTING_COMMAND_PATH):
@@ -61,7 +61,7 @@ func add_project_settings():
 	})
 
 
-func remove_project_settings():
+func remove_project_settings() -> void:
 	# Don't remove the setting if the user manually updated it
 	var editor_settings: EditorSettings = EditorInterface.get_editor_settings()
 	if editor_settings.has_setting(SETTING_COMMAND_PATH):
